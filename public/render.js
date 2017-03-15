@@ -19,20 +19,26 @@ svg.selectAll(".bar")
 
 var index = -1;
 
-svg.firebase( 'https://retroonfire.firebaseio.com/', 
+function render_card(card, node) {
+	return node.text(card.text).attr({
+          x: card.x,
+          y: card.y
+     });
+}
+
+svg.firebase( 'https://retroonfire.firebaseio.com/rooms/room1/cards', 
 {
     createFunc : function(newData) {
         console.log(`create ${newData.val()}`);
+        var card = newData.val();
+
         // callback when data is added, maybe we want to add a text element?
-        return this.append('text').text(newData.val()).attr({
-          x: "15",
-          y: function() {index += 1; return index*50 + 40;}
-        }).attr("font-family","Verdana") .attr("font-size","35");
+        return render_card(card, this.append('text').attr("font-family","Verdana").attr("font-size","35"));
     },
     updateFunc : function(changedData) {
       console.log(`update $(changedData.val())`);
         // data was changed, let's change the text
-        this.text(changedData.val());
+        render_card(changedData.val(), this);
     }
 }
 );
